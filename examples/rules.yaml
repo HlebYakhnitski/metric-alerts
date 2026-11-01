@@ -1,0 +1,37 @@
+rules:
+  - name: latency-high
+    metric: latency_p95_ms
+    kind: threshold
+    op: ">"
+    value: 500
+    severity: warning
+    cooldown_minutes: 60
+    description: p95 latency above 500 ms
+
+  - name: error-rate-critical
+    metric: error_rate_pct
+    kind: threshold
+    op: ">"
+    value: 5
+    severity: critical
+    cooldown_minutes: 30
+    description: more than 5% of requests failing
+
+  - name: signups-drop
+    metric: signups
+    kind: pct_change
+    op: "<"
+    value: -50
+    window: 4            # last hour (4 x 15-minute points)...
+    baseline: same_time_yesterday   # ...vs the same hour yesterday, so quiet nights are not a "drop"
+    severity: warning
+    cooldown_minutes: 120
+    description: signups less than half of the same hour yesterday
+
+  - name: nightly-job-silent
+    metric: job_heartbeat
+    kind: absence
+    window: 45           # minutes without a heartbeat
+    severity: warning
+    cooldown_minutes: 180
+    description: nightly job stopped sending heartbeats
